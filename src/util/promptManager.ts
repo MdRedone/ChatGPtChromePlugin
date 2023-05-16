@@ -20,15 +20,37 @@ export const promptContainsWebResults = async () => {
     return currentPrompt.text.includes('{web_results}')
 }
 
-export const compilePrompt = async (results: SearchResult[] | undefined, query: string) => {
-    const currentPrompt = await getCurrentPrompt()
-    const prompt = replaceVariables(currentPrompt.text, {
+// export const compilePrompt = async (results: SearchResult[] | undefined, query: string) => {
+//     const currentPrompt = await getCurrentPrompt()
+//     const prompt = replaceVariables(currentPrompt.text, {
+//         '{web_results}': formatWebResults(results),
+//         '{query}': removeCommands(query),
+//         '{current_date}': new Date().toLocaleDateString()
+        
+//     })
+//     console.log("prompt: ", prompt)
+//     return prompt
+// }
+
+export const compilePrompt = async (results: SearchResult[] | undefined, query: string, selectedPrompt: Prompt | null) => {
+    let prompt = '';
+  
+    if (selectedPrompt) {
+      // If a saved prompt is selected, use the query from the input box
+      prompt = replaceVariables(selectedPrompt.text, {
         '{web_results}': formatWebResults(results),
         '{query}': removeCommands(query),
         '{current_date}': new Date().toLocaleDateString()
-    })
-    return prompt
-}
+      });
+    } else {
+      // No saved prompt selected, use only the query from the input box
+      prompt = query;
+    }
+  
+    console.log("prompt: ", prompt);
+    return prompt;
+  };
+  
 
 const formatWebResults = (results: SearchResult[] | undefined) => {
     if (!results) {

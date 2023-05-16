@@ -56,6 +56,14 @@ const PromptEditor = (
 
     const handleSelect = (prompt: Prompt) => {
         setShowErrors(false)
+        // const updatedPrompt = { ...selectedPrompt };
+        // const queryIndex = updatedPrompt.text.indexOf('{query}');
+        // if (queryIndex !== -1) {
+        //   const beforeQuery = updatedPrompt.text.substring(0, queryIndex);
+        //   const afterQuery = updatedPrompt.text.substring(queryIndex + '{query}'.length);
+        //   const query = prompt.text.trim();
+        //   updatedPrompt.text = beforeQuery + query + afterQuery;
+        // }
         setPrompt(prompt)
         setDeleteBtnText("delete")
     }

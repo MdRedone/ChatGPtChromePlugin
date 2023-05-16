@@ -113,6 +113,25 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
 
         setPromptUUID(uuid)
         updateUserConfig({ promptUUID: uuid })
+
+        const selectedPrompt = prompts.find((prompt) => prompt.uuid === uuid);
+        console.log("Selected Prompt: ", selectedPrompt)
+
+         // Log the saved prompt text
+        console.log('Saved Prompt Text:', selectedPrompt?.text);
+
+        if (selectedPrompt) {
+            const promptText = selectedPrompt.text;
+            const textarea = document.getElementsByTagName("textarea")[0];
+            if (textarea) {
+                textarea.value = promptText;
+                // const currentText = textarea.value;
+                // const placeholderRegex = /\{query\}/g;
+                // const updatedText = currentText.replace(placeholderRegex, '');
+                // textarea.value = promptText + ' ' + updatedText.trimEnd();
+            }
+        };
+
     }
 
     const removeFocusFromCurrentElement = () => (document.activeElement as HTMLElement)?.blur()
@@ -128,7 +147,7 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
                 />
             </label>
             <span class="wcg-absolute wcg-left-1/2 wcg-m-4 wcg-mx-auto -wcg-translate-x-6 wcg-translate-y-3 wcg-rounded-md wcg-bg-gray-800 wcg-p-1 
-            wcg-text-xs wcg-text-gray-100 wcg-opacity-0 wcg-transition-opacity group-hover:wcg-opacity-100">Alt+W</span>
+            wcg-text-xs wcg-text-gray-100 wcg-opacity-0 wcg-transition-opacity group-hover:wcg-opacity-100">Alt+N</span>
         </div>
 
     return (
