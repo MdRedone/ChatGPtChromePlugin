@@ -14,12 +14,12 @@ const Footer = () => (
             {getTranslation(localizationKeys.UI.supportMe)}
         </p>
         <div className="wcg-flex wcg-flex-row wcg-items-center wcg-gap-4">
-            <a className="wcg-p-4" href="https://www.buymeacoffee.com/anzorq?utm_source=webchatgpt&utm_medium=options_page" target="_blank" rel="noopener noreferrer">
+            {/* <a className="wcg-p-4" href="https://www.buymeacoffee.com/anzorq?utm_source=webchatgpt&utm_medium=options_page" target="_blank" rel="noopener noreferrer">
                 <img src="https://img.buymeacoffee.com/button-api/?text=Support this project&slug=anzorq&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" />
             </a>
             <a className="wcg-p-4" href="https://chrome.google.com/webstore/detail/webchatgpt-chatgpt-with-i/lpfemeioodjbpieminkklglpmhlngfcn/reviews" target="_blank" rel="noopener noreferrer">
                 <img src="../leave_review.png" alt="Review on Chrome Web Store" className="wcg-h-[4.25em] wcg-rounded-lg" />
-            </a>
+            </a> */}
         </div>
     </div>
 )

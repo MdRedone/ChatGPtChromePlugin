@@ -56,14 +56,6 @@ const PromptEditor = (
 
     const handleSelect = (prompt: Prompt) => {
         setShowErrors(false)
-        // const updatedPrompt = { ...selectedPrompt };
-        // const queryIndex = updatedPrompt.text.indexOf('{query}');
-        // if (queryIndex !== -1) {
-        //   const beforeQuery = updatedPrompt.text.substring(0, queryIndex);
-        //   const afterQuery = updatedPrompt.text.substring(queryIndex + '{query}'.length);
-        //   const query = prompt.text.trim();
-        //   updatedPrompt.text = beforeQuery + query + afterQuery;
-        // }
         setPrompt(prompt)
         setDeleteBtnText("delete")
     }
@@ -177,7 +169,7 @@ const PromptEditor = (
 
             <button
                 type={"button"}
-                className="wcg-btn-primary wcg-btn wcg-text-base"
+                className="wcg-bg-orange-600 hover:wcg-bg-orange-900 wcg-btn wcg-text-base wcg-text-white wcg-outline wcg-outline-offset-2 wcg-outline-2 wcg-outline-orange-300"
                 onClick={handleSave}
             >
                 {getTranslation(localizationKeys.buttons.save)}
@@ -185,33 +177,60 @@ const PromptEditor = (
         </div >
     )
 
-    const PromptList = (
-        <div>
-            <button
-                type={"button"}
-                className="wcg-btn-primary wcg-btn wcg-w-full wcg-text-base"
-                onClick={handleAdd}>
-                <span class="material-symbols-outlined wcg-mr-2">
-                    add_circle
-                </span>
-                {getTranslation(localizationKeys.buttons.newPrompt)}
-            </button>
-            <ul className="wcg-scroll-y wcg-menu wcg-mt-4 wcg-flex wcg-max-h-96 wcg-scroll-m-0 wcg-flex-col
-                    wcg-flex-nowrap wcg-overflow-auto wcg-border-2
-                    wcg-border-solid wcg-border-white/20 wcg-p-0">
-                {savedPrompts.map((prmpt: Prompt) => (
-                    <li
-                        key={prmpt.uuid}
-                        onClick={() => handleSelect(prmpt)}
-                    >
-                        <a className={`wcg-text-base ${prmpt.uuid === prompt.uuid ? 'wcg-active' : ''}`}>
-                            📝 {prmpt.name}
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )
+    // const PromptList = (
+    //     <div>
+    //         <button
+    //             type={"button"}
+    //             className="wcg-btn-primary wcg-btn wcg-w-full wcg-text-base"
+    //             onClick={handleAdd}>
+    //             <span class="material-symbols-outlined wcg-mr-2">
+    //                 add
+    //             </span>
+    //             {getTranslation(localizationKeys.buttons.newPrompt)}
+    //         </button>
+    //         <ul className="wcg-scroll-y wcg-menu wcg-mt-4 wcg-flex wcg-max-h-96 wcg-scroll-m-0 wcg-flex-col
+    //                 wcg-flex-nowrap wcg-overflow-auto wcg-border-2
+    //                 wcg-border-solid wcg-border-white/20 wcg-p-0">
+    //             {savedPrompts.map((prmpt: Prompt) => (
+    //                 <li
+    //                     key={prmpt.uuid}
+    //                     onClick={() => handleSelect(prmpt)}
+    //                 >
+    //                     <a className={`wcg-text-base ${prmpt.uuid === prompt.uuid ? 'wcg-active' : ''}`}>
+    //                         📝 {prmpt.name}
+    //                     </a>
+    //                 </li>
+    //             ))}
+    //         </ul>
+    //     </div>
+    // )
+const PromptList = (
+  <div>
+    <button
+      type="button"
+      className="wcg-btn wcg-w-full wcg-text-base wcg-bg-orange-600 hover:wcg-bg-orange-800 wcg-text-white wcg-py-2 wcg-px-4 wcg-rounded-md wcg-shadow-sm mb-4 wcg-outline wcg-outline-offset-2 wcg-outline-2 wcg-outline-orange-300"
+      onClick={handleAdd}
+    >
+      <span className="material-symbols-outlined wcg-mr-2">add</span>
+      {getTranslation(localizationKeys.buttons.newPrompt)}
+    </button>
+    <ul className="wcg-scroll-y wcg-menu wcg-max-h-96 wcg-overflow-auto wcg-p-0">
+      {savedPrompts.map((prmpt: Prompt) => (
+        <li
+          key={prmpt.uuid}
+          onClick={() => handleSelect(prmpt)}
+          className={`wcg-text-base ${
+            prmpt.uuid === prompt.uuid ? 'wcg-active' : ''
+          }`}
+        >
+          <a className="wcg-flex wcg-items-center wcg-py-2 wcg-px-4 hover:wcg-bg-gray-600 wcg-rounded-md">
+            ✍ {prmpt.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 
     const nameInput = (
         <input
@@ -233,7 +252,7 @@ const PromptEditor = (
         <button
             type={"button"}
             className={`wcg-btn wcg-text-base
-                    ${deleteBtnText === "check" ? "wcg-btn-error" : "wcg-btn-primary"}
+                    ${deleteBtnText === "check" ? "wcg-btn-error" : "wcg-bg-red-800 hover:wcg-bg-red-900"}
                     ${prompt.uuid === 'default' || prompt.uuid === 'default_en' ? "wcg-hidden" : ""}`}
             onClick={handleDeleteBtnClick}
         >
