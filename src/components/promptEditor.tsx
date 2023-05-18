@@ -133,8 +133,7 @@ const PromptEditor = (
                 <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.webResults)}>
                     <button
                         // ${showErrors && webResultsError ? "wcg-btn-error" : hasWebResultsPlaceholder ? "wcg-btn-success" : "wcg-btn-warning"}
-                        className={`wcg-btn-success wcg-btn
-                        wcg-p-1 wcg-lowercase`}
+                        className={`wcg-btn wcg-text-base wcg-text-white wcg-p-1 wcg-lowercase wcg-bg-rose-600 hover:wcg-bg-rose-900`}
                         onClick={() => {
                             // setWebResultsError(false)
                             handleInsertText('{web_results}')
@@ -147,8 +146,8 @@ const PromptEditor = (
                 <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.query)}>
                     <button
                         className={`wcg-btn
-                        ${showErrors && queryError ? "wcg-btn-error" : hasQueryPlaceholder ? "wcg-btn-success" : "wcg-btn-warning"}
-                        wcg-p-1 wcg-lowercase`}
+                        ${showErrors && queryError ? "wcg-btn-error" : hasQueryPlaceholder ? "wcg-bg-rose-600" : "wcg-btn-warning"}
+                        wcg-py-1 wcg-px-1 wcg-lowercase wcg-text-base wcg-text-white  hover:${hasQueryPlaceholder ? "wcg-bg-rose-900" : ""}`}
                         onClick={() => {
                             setQueryError(false)
                             handleInsertText('{query}')
@@ -157,9 +156,10 @@ const PromptEditor = (
                         {"{query}"}
                     </button>
                 </TooltipWrapper>
+
                 <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.currentDate)}>
                     <button
-                        className="wcg-btn-success wcg-btn wcg-p-1 wcg-lowercase"
+                        className="wcg-text-base wcg-text-white wcg-bg-rose-600 hover:wcg-bg-rose-900 wcg-btn wcg-p-1 wcg-lowercase"
                         onClick={() => handleInsertText('{current_date}')}
                     >
                         {"{current_date}"}
