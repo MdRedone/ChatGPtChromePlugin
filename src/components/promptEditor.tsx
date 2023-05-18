@@ -169,7 +169,7 @@ const PromptEditor = (
 
             <button
                 type={"button"}
-                className="wcg-bg-orange-600 hover:wcg-bg-orange-900 wcg-btn wcg-text-base wcg-text-white wcg-outline wcg-outline-offset-2 wcg-outline-2 wcg-outline-orange-300"
+                className="wcg-bg-violet-600 hover:wcg-bg-violet-900 wcg-btn wcg-text-base wcg-text-white wcg-outline wcg-outline-offset-2 wcg-outline-2 wcg-outline-violet-200"
                 onClick={handleSave}
             >
                 {getTranslation(localizationKeys.buttons.save)}
@@ -208,7 +208,7 @@ const PromptList = (
   <div>
     <button
       type="button"
-      className="wcg-btn wcg-w-full wcg-text-base wcg-bg-orange-600 hover:wcg-bg-orange-800 wcg-text-white wcg-py-2 wcg-px-4 wcg-rounded-md wcg-shadow-sm mb-4 wcg-outline wcg-outline-offset-2 wcg-outline-2 wcg-outline-orange-300"
+      className="wcg-btn wcg-w-full wcg-text-base wcg-bg-violet-600 hover:wcg-bg-violet-900 wcg-text-white wcg-py-2 wcg-px-4 wcg-rounded-md wcg-shadow-sm mb-4 wcg-outline wcg-outline-offset-2 wcg-outline-2 wcg-outline-violet-200"
       onClick={handleAdd}
     >
       <span className="material-symbols-outlined wcg-mr-2">add</span>
