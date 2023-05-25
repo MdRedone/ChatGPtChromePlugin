@@ -69,11 +69,11 @@ export default function OptionsPage() {
                     language={language}
                 />
 
-                <div className="wcg-divider wcg-m-0 wcg-w-4/5 wcg-self-center" />
+                {/* <div className="wcg-divider wcg-m-0 wcg-w-4/5 wcg-self-center" /> */}
 
-                <OptionsEditor />
+                {/* <OptionsEditor /> */}
 
-                <div className="wcg-divider wcg-m-0 wcg-w-4/5 wcg-self-center" />
+                {/* <div className="wcg-divider wcg-m-0 wcg-w-4/5 wcg-self-center" /> */}
 
                 <div className="wcg-flex wcg-flex-col wcg-items-center wcg-self-center">
                     {/* <div className="wcg-flex wcg-flex-row wcg-gap-4">
@@ -81,7 +81,7 @@ export default function OptionsPage() {
                         <SocialCard icon={icons.discord} text={getTranslation(localizationKeys.socialButtonTips.discord)} url="https://discord.gg/hjvAtVNtHa" />
                         <SocialCard icon={icons.github} text={getTranslation(localizationKeys.socialButtonTips.github)} url="https://github.com/qunash/chatgpt-advanced" />
                     </div> */}
-                    <Footer />
+                    {/* <Footer /> */}
                 </div>
             </div>
 

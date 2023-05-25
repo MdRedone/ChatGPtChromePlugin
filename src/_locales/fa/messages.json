@@ -1,9 +1,9 @@
 {
   "appName": {
-    "message": "WebChatGPT: ChatGPT با دسترسی به اینترنت"
+    "message": "Prompt Automator: ChatGPT با دسترسی به اینترنت"
   },
   "appDesc": {
-    "message": "پاسخ های ChatGPT را با تنظیم اعلان و نتایج وب تقویت کنید."
+    "message": "موجه أتمتة ChatGPT را با تنظیم اعلان و نتایج وب تقویت کنید."
   },
   "toggleWebAccess": {
     "message": "تغییر دسترسی به وب"

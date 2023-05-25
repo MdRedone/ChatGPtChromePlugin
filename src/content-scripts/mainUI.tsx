@@ -6,6 +6,11 @@ import ErrorMessage from 'src/components/errorMessage'
 import { getUserConfig, UserConfig } from 'src/util/userConfig'
 import { SearchRequest, SearchResult, webSearch } from './web_search'
 
+import Section from 'src/components/sections'
+// import ContentSection from 'src/components/contentSection';
+import { AllBlogsSection, BlogsSection, CategoriesSection } from 'src/components/sectionContent'
+// import Section from 'src/components/demo'
+
 import createShadowRoot from 'src/util/createShadowRoot'
 import { compilePrompt, promptContainsWebResults } from 'src/util/promptManager'
 import SlashCommandsMenu, { slashCommands } from 'src/components/slashCommandsMenu'
@@ -19,6 +24,8 @@ let btnSubmit: HTMLButtonElement | null | undefined
 let textarea: HTMLTextAreaElement | null
 let chatGptFooter: HTMLDivElement | null
 let toolbar: HTMLElement | null
+let button: HTMLButtonElement | null 
+// let selectedCategory: string = 'All Blogs'
 
 
 function renderSlashCommandsMenu() {
@@ -157,12 +164,16 @@ async function updateUI() {
     await renderToolbar()
 
     renderSlashCommandsMenu()
+    await renderSectionButtons();
+
 
     chatGptFooter = getFooter()
     if (chatGptFooter) {
         const lastChild = chatGptFooter.lastElementChild as HTMLElement
         if (lastChild) lastChild.style.padding = '0 0 0.5em 0'
     }
+
+    // await renderSectionButtons();
 
     updatingUI = false
 }
@@ -183,6 +194,66 @@ async function renderToolbar() {
     }
 }
 
+// async function renderSectionButtons() {
+//     if (toolbar && textarea) {
+//       const sectionsDiv = document.createElement('div');
+//       textarea.parentElement?.insertBefore(sectionsDiv, textarea.parentElement.firstChild);
+//       render(<SectionButtons selectedCategory={selectedCategory} onCategorySelect={onCategorySelect} />, sectionsDiv);
+//     }
+//   }
+// async function renderToolbar() {
+//     try {
+//       const { shadowRootDiv, shadowRoot } = await createShadowRoot('content-scripts/mainUI.css')
+//       shadowRootDiv.classList.add('wcg-toolbar')
+//     //   document.body.prepend(shadowRootDiv)
+//     // document.body.style.position = 'relative'
+//     document.body.insertBefore(shadowRootDiv, document.body.firstChild)
+//       render(<Toolbar textarea={textarea} />, shadowRoot)
+//     } catch (e) {
+//       if (e instanceof Error) {
+//         showErrorMessage(Error(`Error loading WebChatGPT toolbar: ${e.message}. Please reload the page (F5).`))
+//       }
+//     }
+
+//     window.scrollTo(0, 0);
+//   }
+// async function renderToolbar() {
+//     try {
+//       const { shadowRootDiv, shadowRoot } = await createShadowRoot('content-scripts/mainUI.css')
+//       shadowRootDiv.classList.add('wcg-toolbar', 'centered') // Add the 'centered' class
+//       const containerDiv = document.createElement('div')
+//       containerDiv.classList.add('toolbar-container')
+//       containerDiv.appendChild(shadowRootDiv)
+//       document.body.insertBefore(containerDiv, document.body.firstChild) // Insert the container div
+//       render(<Toolbar textarea={textarea} />, shadowRoot)
+//     } catch (e) {
+//       if (e instanceof Error) {
+//         showErrorMessage(Error(`Error loading WebChatGPT toolbar: ${e.message}. Please reload the page (F5).`))
+//       }
+//     }
+//   }
+
+async function renderSectionButtons() {
+    try {
+      const textareaParentParent = textarea?.parentElement?.parentElement;
+      const sectionButtonsDiv = document.createElement('div');
+      sectionButtonsDiv.className = 'wcg-section-buttons';
+      textareaParentParent?.appendChild(sectionButtonsDiv);
+    //   document.body.insertBefore(sectionButtonsDiv, document.body.firstChild )
+      render(<Section button={button} />, sectionButtonsDiv);
+    } catch (e) {
+      if (e instanceof Error) {
+        showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
+      }
+    }
+  }
+  
+  
+//   function onCategorySelect(category: string) {
+//     selectedCategory = category 
+//     updateUI();
+//   }
+  
 
 const mutationObserver = new MutationObserver((mutations) => {
     
@@ -210,3 +281,6 @@ window.onload = function () {
 window.onunload = function () {
     mutationObserver.disconnect()
 }
+
+// document.documentElement.style.display = 'none'
+
