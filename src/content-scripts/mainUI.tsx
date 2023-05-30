@@ -1,15 +1,12 @@
 import '../style/base.css'
 import { h, render } from 'preact'
-import { getTextArea, getFooter, getRootElement, getSubmitButton, getWebChatGPTToolbar } from '../util/elementFinder'
+import { getTextArea, getFooter, getRootElement, getSubmitButton, getWebChatGPTToolbar, getTargetDiv, getSecondDiv, hideDiv } from '../util/elementFinder'
 import Toolbar from 'src/components/toolbar'
 import ErrorMessage from 'src/components/errorMessage'
 import { getUserConfig, UserConfig } from 'src/util/userConfig'
 import { SearchRequest, SearchResult, webSearch } from './web_search'
 
 import Section from 'src/components/sections'
-// import ContentSection from 'src/components/contentSection';
-import { AllBlogsSection, BlogsSection, CategoriesSection } from 'src/components/sectionContent'
-// import Section from 'src/components/demo'
 
 import createShadowRoot from 'src/util/createShadowRoot'
 import { compilePrompt, promptContainsWebResults } from 'src/util/promptManager'
@@ -18,6 +15,9 @@ import { apiExtractText } from './api'
 
 let isProcessing = false
 let updatingUI = false
+// let renderSectionButtonsPromise: Promise<void> | null = null;
+// let renderSectionButtonsTimeout: NodeJS.Timeout | null = null;
+let sectionButtonsRendered = false;
 
 const rootEl = getRootElement()
 let btnSubmit: HTMLButtonElement | null | undefined
@@ -25,6 +25,9 @@ let textarea: HTMLTextAreaElement | null
 let chatGptFooter: HTMLDivElement | null
 let toolbar: HTMLElement | null
 let button: HTMLButtonElement | null 
+let section: HTMLElement | null
+// let button: HTMLButtonElement | null = null;
+
 // let selectedCategory: string = 'All Blogs'
 
 
@@ -116,6 +119,12 @@ async function onSubmit(event: MouseEvent | KeyboardEvent) {
         isProcessing = true
         await handleSubmit(query)
         isProcessing = false
+
+        // hideSectionButtons(); 
+        // if (renderSectionButtonsPromise) {
+        //     renderSectionButtonsPromise = null;
+        //     renderSectionButtons();
+        // }
     }
 }
 
@@ -144,6 +153,7 @@ async function updateUI() {
 
     updatingUI = true
 
+
     textarea = getTextArea()
     toolbar = getWebChatGPTToolbar()
     // console.info("toolbar --> ", toolbar)
@@ -153,6 +163,7 @@ async function updateUI() {
     }
 
     if (toolbar) return
+
 
     console.info("WebChatGPT: Updating UI")
 
@@ -164,7 +175,7 @@ async function updateUI() {
     await renderToolbar()
 
     renderSlashCommandsMenu()
-    await renderSectionButtons();
+    // await renderSectionButtons();
 
 
     chatGptFooter = getFooter()
@@ -173,7 +184,19 @@ async function updateUI() {
         if (lastChild) lastChild.style.padding = '0 0 0.5em 0'
     }
 
-    // await renderSectionButtons();
+    // hideTargetDiv();
+
+//     const targetDiv = getTargetDiv();
+//     if (targetDiv) {
+//         targetDiv.style.display = 'none';
+//     }
+//     console.log('targetDiv' + targetDiv)
+
+//   const secondDiv = getSecondDiv();
+//   if (secondDiv) {
+//     secondDiv.style.display = 'none';
+//   }
+//   console.log('secondDiv' + secondDiv)
 
     updatingUI = false
 }
@@ -194,13 +217,6 @@ async function renderToolbar() {
     }
 }
 
-// async function renderSectionButtons() {
-//     if (toolbar && textarea) {
-//       const sectionsDiv = document.createElement('div');
-//       textarea.parentElement?.insertBefore(sectionsDiv, textarea.parentElement.firstChild);
-//       render(<SectionButtons selectedCategory={selectedCategory} onCategorySelect={onCategorySelect} />, sectionsDiv);
-//     }
-//   }
 // async function renderToolbar() {
 //     try {
 //       const { shadowRootDiv, shadowRoot } = await createShadowRoot('content-scripts/mainUI.css')
@@ -233,27 +249,87 @@ async function renderToolbar() {
 //     }
 //   }
 
-async function renderSectionButtons() {
-    try {
-      const textareaParentParent = textarea?.parentElement?.parentElement;
-      const sectionButtonsDiv = document.createElement('div');
-      sectionButtonsDiv.className = 'wcg-section-buttons';
-      textareaParentParent?.appendChild(sectionButtonsDiv);
-    //   document.body.insertBefore(sectionButtonsDiv, document.body.firstChild )
-      render(<Section button={button} />, sectionButtonsDiv);
-    } catch (e) {
-      if (e instanceof Error) {
-        showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
-      }
-    }
-  }
-  
-  
-//   function onCategorySelect(category: string) {
-//     selectedCategory = category 
-//     updateUI();
+
+// To render the section button below the dropdowns
+// async function renderSectionButtons() {
+//     try {
+//       const textareaParentParent = textarea?.parentElement?.parentElement;
+//       const sectionButtonsDiv = document.createElement('div');
+//       sectionButtonsDiv.className = 'wcg-section-buttons';
+//       textareaParentParent?.appendChild(sectionButtonsDiv);
+//     //   document.body.insertBefore(sectionButtonsDiv, document.body.firstChild )
+//       render(<Section button={button} />, sectionButtonsDiv);
+//     } catch (e) {
+//       if (e instanceof Error) {
+//         showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
+//       }
+//     }
 //   }
+
+//
+// async function renderSectionButtons() {
+//     try {
+//       const targetDiv = getTargetDiv();
+//       if (targetDiv) {
+//         targetDiv.style.display = 'none';
   
+//         const sectionButtonContainer = document.createElement('div');
+//         sectionButtonContainer.className = 'section-button-container';
+
+//        if( targetDiv.parentNode) {
+//             // targetDiv.parentNode.insertBefore(sectionButtonContainer, targetDiv.nextSibling);
+//             targetDiv.insertAdjacentElement('afterend', sectionButtonContainer);
+  
+//         render(<Section button={button}/>, sectionButtonContainer);
+//        }
+//       }
+//     } catch (e) {
+//       if (e instanceof Error) {
+//         showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
+//       }
+//     }
+//   }
+
+// async function renderSectionButtons() {
+//     try {
+//       if (sectionButtonsRendered) {
+//         return;
+//       }
+  
+//       const targetDiv = getTargetDiv();
+//       const sectionButtonContainer = document.querySelector('.section-button-container');
+  
+//       if (targetDiv && !sectionButtonContainer) {
+//         targetDiv.style.display = 'none';
+  
+//         const sectionButtonContainer = document.createElement('div');
+//         sectionButtonContainer.className = 'section-button-container';
+  
+//         if (targetDiv.parentNode) {
+//           targetDiv.parentNode.insertBefore(sectionButtonContainer, targetDiv.nextSibling);
+  
+//           render(<Section button={button} />, sectionButtonContainer);
+//         }
+  
+//         sectionButtonsRendered = true;
+//       }
+//     } catch (e) {
+//       if (e instanceof Error) {
+//         showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
+//       }
+//     }
+//   }
+
+// Event listener to disable the section button when the user submit the prompt
+// function addNewChatEventListener() {
+//     const newChatButton = document.querySelector('.flex\\.py-3\\.px-3\\.items-center\\.gap-3\\.transition-colors\\.duration-200\\.text-white\\.cursor-pointer\\.text-sm\\.rounded-md\\.border\\.border-white\\/20\\.hover\\:bg-gray-500\\/10\\.mb-1\\.flex-shrink-0')
+//     if (newChatButton) {
+//       newChatButton.addEventListener('click', () => {
+//         updateUI()
+//       })
+//     }
+//     console.log("new chat button" + newChatButton)
+//   }
 
 const mutationObserver = new MutationObserver((mutations) => {
     
@@ -274,6 +350,7 @@ const mutationObserver = new MutationObserver((mutations) => {
 
 window.onload = function () {
     updateUI()
+    // addNewChatEventListener()
 
     mutationObserver.observe(rootEl, { childList: true, subtree: true })
 }
@@ -282,5 +359,14 @@ window.onunload = function () {
     mutationObserver.disconnect()
 }
 
-// document.documentElement.style.display = 'none'
+// document.getElementById('text-gray-800 w-full mx-auto md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100')?.style.display
 
+// const element1 = document.querySelector('.text-gray-800.w-full.mx-auto.md\\:max-w-2xl.lg\\:max-w-3xl.md\\:h-full.md\\:flex.md\\:flex-col.px-6.dark\\:text-gray-100') as HTMLElement;
+// if (element1) {
+//   element1.style.display = 'none'; // Set the display property to 'none' to hide the element
+// }
+
+// const element2 = document.querySelector('.h-32.md\\:h-48.flex-shrink-0') as HTMLElement;
+// if (element2) {
+//   element2.style.display = 'none'; // Set the display property to 'none' to hide the element
+// }

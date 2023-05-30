@@ -63,10 +63,10 @@ const Section = ({button}: SectionButtonsProps) =>{
     };
 
     return (
-      <div className="wcg-section-buttons flex flex-col gap-0">
+      <div className="wcg-section-buttons flex flex-col gap-0" style="display: flex; justify-content: center; text-align: center; margin-top: 170px">
         <div className="space-x-6">
               <button
-                className={`py-2 px-2 rounded-full border-2 border-black ${
+                className={`py-2 px-4 rounded-full border-2 border-black ${
                   selectedCategory === 'All Blogs' ? 'bg-black text-white' : 'bg-white text-black'
                 }`}
                 onClick={() => onCategorySelect('All Blogs')}
