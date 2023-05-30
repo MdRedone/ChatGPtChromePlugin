@@ -194,13 +194,6 @@ async function renderToolbar() {
     }
 }
 
-// async function renderSectionButtons() {
-//     if (toolbar && textarea) {
-//       const sectionsDiv = document.createElement('div');
-//       textarea.parentElement?.insertBefore(sectionsDiv, textarea.parentElement.firstChild);
-//       render(<SectionButtons selectedCategory={selectedCategory} onCategorySelect={onCategorySelect} />, sectionsDiv);
-//     }
-//   }
 // async function renderToolbar() {
 //     try {
 //       const { shadowRootDiv, shadowRoot } = await createShadowRoot('content-scripts/mainUI.css')
@@ -233,27 +226,20 @@ async function renderToolbar() {
 //     }
 //   }
 
-async function renderSectionButtons() {
-    try {
-      const textareaParentParent = textarea?.parentElement?.parentElement;
-      const sectionButtonsDiv = document.createElement('div');
-      sectionButtonsDiv.className = 'wcg-section-buttons';
-      textareaParentParent?.appendChild(sectionButtonsDiv);
-    //   document.body.insertBefore(sectionButtonsDiv, document.body.firstChild )
-      render(<Section button={button} />, sectionButtonsDiv);
-    } catch (e) {
-      if (e instanceof Error) {
-        showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
-      }
-    }
-  }
-  
-  
-//   function onCategorySelect(category: string) {
-//     selectedCategory = category 
-//     updateUI();
-//   }
-  
+// async function renderSectionButtons() {
+//     try {
+//       const textareaParentParent = textarea?.parentElement?.parentElement;
+//       const sectionButtonsDiv = document.createElement('div');
+//       sectionButtonsDiv.className = 'wcg-section-buttons';
+//       textareaParentParent?.appendChild(sectionButtonsDiv);
+//     //   document.body.insertBefore(sectionButtonsDiv, document.body.firstChild )
+//       render(<Section button={button} />, sectionButtonsDiv);
+//     } catch (e) {
+//       if (e instanceof Error) {
+//         showErrorMessage(Error(`Error rendering section buttons: ${e.message}. Please reload the page (F5).`));
+//       }
+//     }
+//   }  
 
 const mutationObserver = new MutationObserver((mutations) => {
     
