@@ -143,10 +143,10 @@ export const savePrompt = async (prompt: Prompt, category: string) => {
     const savedPrompts = await getSavedPrompts(false, category)
     const index = savedPrompts.findIndex((i: Prompt) => i.uuid === prompt.uuid)
     if (index >= 0) {
-        savedPrompts[index] = prompt
+        savedPrompts[index] = {...prompt, category }
     } else {
         prompt.uuid = uuidv4()
-        savedPrompts.push(prompt)
+        savedPrompts.push({...prompt, category})
     }
 
     await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts })
