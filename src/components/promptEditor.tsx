@@ -14,6 +14,9 @@ const PromptEditor = (
     const [hasWebResultsPlaceholder, setHasWebResultsPlaceholder] = useState(false)
     const [hasQueryPlaceholder, setHasQueryPlaceholder] = useState(false)
     const [deleteBtnText, setDeleteBtnText] = useState("delete")
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
+
 
     const [showErrors, setShowErrors] = useState(false)
     const [nameError, setNameError] = useState(false)
@@ -25,8 +28,9 @@ const PromptEditor = (
         updateSavedPrompts()
     }, [])
 
+
     const updateSavedPrompts = async () => {
-        const prompts = await getSavedPrompts()
+        const prompts = await getSavedPrompts(false, selectedCategory)
         setSavedPrompts(prompts)
         if (prompt.uuid === 'default') {
             setPrompt(prompts[0])
@@ -47,12 +51,29 @@ const PromptEditor = (
         // setWebResultsError(!prompt.text.includes('{web_results}'))
         setQueryError(!prompt.text.includes('{query}'))
     }, [prompt])
+      
 
     async function updateList() {
-        getSavedPrompts().then(sp => {
+        getSavedPrompts(false, selectedCategory).then(sp => {
             setSavedPrompts(sp)
         })
     }
+    // async function updateList() {
+    //     const category = " "; // Replace "your_category_value" with the actual category value
+    //     getSavedPrompts(false, category).then(sp => {
+    //       setSavedPrompts(sp);
+    //     });
+    //   }
+
+    useEffect(() => {
+    // Update the filtered prompts whenever the selectedCategory or savedPrompts state changes
+    const filterPromptsByCategory = () => {
+      const filtered = savedPrompts.filter(prompt => prompt.category === selectedCategory);
+      setFilteredPrompts(filtered);
+    };
+
+    filterPromptsByCategory();
+  }, [selectedCategory, savedPrompts]);
 
     const handleSelect = (prompt: Prompt) => {
         setShowErrors(false)
@@ -63,7 +84,7 @@ const PromptEditor = (
 
     const handleAdd = () => {
         setShowErrors(false)
-        setPrompt({ name: '', text: '' })
+        setPrompt({ name: '', text: '', category: '' })
         setDeleteBtnText("delete")
         if (nameInputRef.current) {
             nameInputRef.current.focus()
@@ -75,9 +96,12 @@ const PromptEditor = (
         if (nameError || textError || webResultsError || queryError) {
             return
         }
+        console.log("Selected Category:", selectedCategory); // Debug statement
 
-        await savePrompt(prompt)
+        await savePrompt(prompt, selectedCategory)
+        console.log("Prompt saved under category:", selectedCategory); // Debug statement
         await updateList()
+        console.log("Updated prompt list"); // Debug statement
     }
 
     const handleDeleteBtnClick = () => {
@@ -89,7 +113,7 @@ const PromptEditor = (
     }
 
     const handleDelete = async () => {
-        await deletePrompt(prompt)
+        await deletePrompt(prompt, selectedCategory)
         updateList()
         handleAdd()
     }
@@ -123,6 +147,37 @@ const PromptEditor = (
         setHasWebResultsPlaceholder(text.includes("{web_results}"))
         setHasQueryPlaceholder(text.includes("{query}"))
     }
+
+    // const handleCategoryChange = (e: Event) => {
+    //     const category = (e.target as HTMLSelectElement).value;
+    //     setSelectedCategory(category);
+    //   };
+    const handleCategoryChange = (e: h.JSX.TargetedEvent<HTMLSelectElement, Event>) => {
+        const category = e.currentTarget.value;
+        setSelectedCategory(category);
+      };
+      
+      
+    
+      const dropdownOptions = [
+        { value: 'category1', label: 'Category 1' },
+        { value: 'category2', label: 'Category 2' }
+      ];
+    
+      const dropdown = (
+        <select
+          className="wcg-select wcg-flex-1 wcg-py-2 wcg-px-2 wcg-text-base"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          <option value="">Select Category</option>
+          {dropdownOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      );
 
     const actionToolbar = (
         <div className={`wcg-mt-4 wcg-flex wcg-flex-row wcg-justify-between
@@ -177,6 +232,7 @@ const PromptEditor = (
         </div >
     )
 
+
     // const PromptList = (
     //     <div>
     //         <button
@@ -215,7 +271,7 @@ const PromptList = (
       {getTranslation(localizationKeys.buttons.newPrompt)}
     </button>
     <ul className="wcg-scroll-y wcg-menu wcg-max-h-96 wcg-overflow-auto wcg-p-0">
-      {savedPrompts.map((prmpt: Prompt) => (
+      {filteredPrompts.map((prmpt: Prompt) => (
         <li
           key={prmpt.uuid}
           onClick={() => handleSelect(prmpt)}
@@ -288,6 +344,10 @@ const PromptList = (
                     <div className="wcg-flex wcg-flex-row wcg-items-center wcg-gap-2">
                         {nameInput}
                         {btnDelete}
+                    </div>
+                    <div className="wcg-flex wcg-items-center wcg-mt-2">
+                        <label className="wcg-p-2 wcg-w-32">Category:</label>
+                        {dropdown}
                     </div>
                     {textArea}
 

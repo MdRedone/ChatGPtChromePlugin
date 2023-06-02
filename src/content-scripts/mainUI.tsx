@@ -359,14 +359,3 @@ window.onunload = function () {
     mutationObserver.disconnect()
 }
 
-// document.getElementById('text-gray-800 w-full mx-auto md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6 dark:text-gray-100')?.style.display
-
-// const element1 = document.querySelector('.text-gray-800.w-full.mx-auto.md\\:max-w-2xl.lg\\:max-w-3xl.md\\:h-full.md\\:flex.md\\:flex-col.px-6.dark\\:text-gray-100') as HTMLElement;
-// if (element1) {
-//   element1.style.display = 'none'; // Set the display property to 'none' to hide the element
-// }
-
-// const element2 = document.querySelector('.h-32.md\\:h-48.flex-shrink-0') as HTMLElement;
-// if (element2) {
-//   element2.style.display = 'none'; // Set the display property to 'none' to hide the element
-// }

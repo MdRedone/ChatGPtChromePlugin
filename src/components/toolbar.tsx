@@ -5,10 +5,10 @@ import { getSavedPrompts, Prompt } from 'src/util/promptManager'
 import { getUserConfig, updateUserConfig } from 'src/util/userConfig'
 import timePeriodOptions from 'src/util/timePeriodOptions.json'
 import regionOptions from 'src/util/regionOptions.json'
+import categoryOptions from 'src/util/categoryOptions.json'
 import Browser from 'webextension-polyfill'
 import Dropdown from './dropdown'
 import { getTranslation, localizationKeys, setLocaleLanguage } from 'src/util/localization'
-import {  AllBlogsSection, BlogsSection, CategoriesSection } from './sectionContent'
 
 type DropdownItem = {
     target: {
@@ -26,6 +26,7 @@ numResultsOptions.push({
     label: 'Max results'
 })
 
+
 interface ToolbarProps {
     textarea: HTMLTextAreaElement | null
 }
@@ -36,7 +37,9 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
     const [region, setRegion] = useState('wt-wt')
     const [promptUUID, setPromptUUID] = useState<string>('')
     const [prompts, setPrompts] = useState<Prompt[]>([])
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [category, setCategory] = useState('');
+    const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
+
 
     useEffect(() => {
         getUserConfig().then((userConfig) => {
@@ -49,7 +52,7 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
             setLocaleLanguage(userConfig.language)
             updateTextAreaPlaceholder(userConfig.webAccess)
         })
-        updatePrompts()
+        // updatePrompts(category)
     }, [])
 
     useEffect(() => {
@@ -70,13 +73,33 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
         textarea?.focus()
     }, [webAccess])
 
-    const handlePromptClick = () => updatePrompts()
+    useEffect(() => {
+        updatePrompts(category);
+      }, []);
 
-    const updatePrompts = () => {
-        getSavedPrompts().then((savedPrompts) => {
-            setPrompts(savedPrompts)
-        })
-    }
+      useEffect(() => {
+        const filteredPromptsByCategory = prompts.filter((prompt) => prompt.category === category);
+        setFilteredPrompts(filteredPromptsByCategory);
+      }, [prompts, category]);
+
+
+    const handlePromptClick = () => updatePrompts(category)
+
+    // const updatePrompts = (category: string) => {
+    //     getSavedPrompts(true,category).then((savedPrompts) => {
+    //         setPrompts(savedPrompts)
+    //         const filteredPrompts = savedPrompts.filter((prompt: Prompt) => prompt.category === category);
+    //         setFilteredPrompts(filteredPrompts);
+    //         // setFilteredPrompts(savedPrompts.filter((prompt: Prompt) => prompt.category === category));
+    //     })
+    // }
+
+    const updatePrompts = async (selectedCategory: string) => {
+        const prompts = await getSavedPrompts(true, selectedCategory);
+        // Update the state with the retrieved prompts based on the category
+        console.log('Retrieved Prompts:', prompts);
+        setPrompts(prompts);
+      };
 
     const updateTextAreaPlaceholder = (show: boolean) => {
         textarea?.setAttribute('placeholder', show ? getTranslation(localizationKeys.UI.textareaPlaceholder) : '')
@@ -99,6 +122,22 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
         setRegion(e.target.value)
         updateUserConfig({ region: e.target.value })
     }
+
+    // const handleCategoryChange = (e: DropdownItem) => {
+    //     setCategory(e.target.value)
+    //     updateUserConfig({ category: e.target.value})
+    // }
+    const handleCategoryChange = (e: DropdownItem) => {
+        const selectedCategory = e.target.value;
+        console.log('Selected category value:', selectedCategory);
+        setCategory(selectedCategory);
+        updateUserConfig({ category: selectedCategory });
+        updatePrompts(selectedCategory);
+
+        console.log('Selected category:', + selectedCategory)
+      };
+      
+      
 
     const handlePromptChange = (e: DropdownItem) => {
 
@@ -132,6 +171,8 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
     }
 
     const removeFocusFromCurrentElement = () => (document.activeElement as HTMLElement)?.blur()
+
+    const dropdownOptions = filteredPrompts.map((prompt) => ({ value: prompt.uuid ?? 'undefin', label: prompt.name })).concat({ value: 'wcg-new-prompt', label: `+ ${getTranslation(localizationKeys.buttons.newPrompt)}` });
 
 
     const webAccessToggle =
@@ -176,11 +217,16 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
                         onChange={handleRegionChange}
                         options={regionOptions} /> */}
                     <Dropdown
+                        value={category}
+                        onChange={handleCategoryChange}
+                        options={categoryOptions} />
+                    <Dropdown
                         value={promptUUID}
                         onChange={handlePromptChange}
                         options={
-                            prompts.map((prompt) => ({ value: prompt.uuid ?? 'undefin', label: prompt.name })).concat({ value: 'wcg-new-prompt', label: `+ ${getTranslation(localizationKeys.buttons.newPrompt)}` })
+                            filteredPrompts.map((prompt) => ({ value: prompt.uuid ?? 'undefine', label: prompt.name })).concat({ value: 'wcg-new-prompt', label: `+ ${getTranslation(localizationKeys.buttons.newPrompt)}` })
                         }
+                        // options={dropdownOptions}
                         onClick={handlePromptClick}
                     />
                     {/* <div className="wcg-flex-grow" /> */}
@@ -188,30 +234,6 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
                 {/* </div> */}
             </div>
             {/* <Footer /> */}
-        {/* <div className="wcg-categories">
-            <button
-            className={selectedCategory === 'All Blogs' ? 'active' : ''}
-            onClick={() => setSelectedCategory('All Blogs')}
-            >
-            All Blogs
-            </button>
-            <button
-            className={selectedCategory === 'Blogs' ? 'active' : ''}
-            onClick={() => setSelectedCategory('Blogs')}
-            >
-            Blogs
-            </button>
-            <button
-            className={selectedCategory === 'Categories' ? 'active' : ''}
-            onClick={() => setSelectedCategory('Categories')}
-            >
-            Categories
-            </button>
-      </div>
-
-            {selectedCategory === 'All Blogs' && <AllBlogsSection />}
-            {selectedCategory === 'Blogs' && <BlogsSection />}
-            {selectedCategory === 'Categories' && <CategoriesSection />} */}
         </div>
     )
 

@@ -8,6 +8,7 @@ const defaultConfig = {
     webAccess: true,
     region: 'wt-wt',
     timePeriod: '',
+    category: '',
     language: getSystemLanguage(),
     promptUUID: 'default',
     trimLongText: false,

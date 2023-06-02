@@ -4,13 +4,14 @@ import { getCurrentLanguageName, getLocaleLanguage, getTranslation, localization
 import { getUserConfig } from "./userConfig"
 import { SearchResult } from "src/content-scripts/web_search"
 
-export const SAVED_PROMPTS_KEY = 'saved_prompts'
+export const SAVED_PROMPTS_KEY = ' '
 export const SAVED_PROMPTS_MOVED_KEY = 'saved_prompts_moved_to_local'
 
 export interface Prompt {
     uuid?: string,
     name: string,
     text: string
+    category: string
 }
 
 const removeCommands = (query: string) => query.replace(/\/page:(\S+)\s*/g, '').replace(/\/site:(\S+)\s*/g, '')
@@ -81,22 +82,23 @@ export const getDefaultPrompt = () => {
     return {
         name: 'Default prompt',
         text: getTranslation(localizationKeys.defaultPrompt, 'en') + (getLocaleLanguage() !== 'en' ? `\nReply in ${getCurrentLanguageName()}` : ''),
-        uuid: 'default'
+        uuid: 'default',
+        category: 'default category'
     }
 }
 
 const getDefaultEnglishPrompt = () => {
-    return { name: 'Default English', text: getTranslation(localizationKeys.defaultPrompt, 'en'), uuid: 'default_en' }
+    return { name: 'Default English', text: getTranslation(localizationKeys.defaultPrompt, 'en'), uuid: 'default_en', category: 'default_category' }
 }
 
 export const getCurrentPrompt = async () => {
     const userConfig = await getUserConfig()
     const currentPromptUuid = userConfig.promptUUID
-    const savedPrompts = await getSavedPrompts()
+    const savedPrompts = await getSavedPrompts(true, userConfig.category)
     return savedPrompts.find((i: Prompt) => i.uuid === currentPromptUuid) || getDefaultPrompt()
 }
 
-export const getSavedPrompts = async (addDefaults = true) => {
+export const getSavedPrompts = async (addDefaults = true, category: string) => {
     const { [SAVED_PROMPTS_KEY]: localPrompts, [SAVED_PROMPTS_MOVED_KEY]: promptsMoved } = await Browser.storage.local.get({ [SAVED_PROMPTS_KEY]: [], [SAVED_PROMPTS_MOVED_KEY]: false })
 
     let savedPrompts = localPrompts
@@ -113,6 +115,10 @@ export const getSavedPrompts = async (addDefaults = true) => {
         await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts, [SAVED_PROMPTS_MOVED_KEY]: true })
         await Browser.storage.sync.set({ [SAVED_PROMPTS_KEY]: [] })
     }
+    const filteredPrompts = savedPrompts.filter((prompt: Prompt) => prompt.category === category);
+
+    // const promptsToReturn = addDefaults ? addDefaultPrompts(filteredPrompts) : filteredPrompts;
+    // return promptsToReturn;
 
     return addDefaults ? addDefaultPrompts(savedPrompts) : savedPrompts
 }
@@ -135,21 +141,21 @@ function addDefaultPrompts(prompts: Prompt[]) {
     }
 }
 
-export const savePrompt = async (prompt: Prompt) => {
-    const savedPrompts = await getSavedPrompts(false)
+export const savePrompt = async (prompt: Prompt, category: string) => {
+    const savedPrompts = await getSavedPrompts(false, category)
     const index = savedPrompts.findIndex((i: Prompt) => i.uuid === prompt.uuid)
     if (index >= 0) {
-        savedPrompts[index] = prompt
+        savedPrompts[index] = {...prompt, category }
     } else {
         prompt.uuid = uuidv4()
-        savedPrompts.push(prompt)
+        savedPrompts.push({...prompt, category})
     }
 
     await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts })
 }
 
-export const deletePrompt = async (prompt: Prompt) => {
-    let savedPrompts = await getSavedPrompts()
+export const deletePrompt = async (prompt: Prompt, category: string) => {
+    let savedPrompts = await getSavedPrompts(true, category)
     savedPrompts = savedPrompts.filter((i: Prompt) => i.uuid !== prompt.uuid)
     await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts })
 }
