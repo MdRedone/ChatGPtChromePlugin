@@ -130,7 +130,7 @@ const PromptEditor = (
         >
             <div className="wcg-flex wcg-flex-row wcg-gap-4">
                 {/* <TooltipWrapper tip={showErrors ? getTranslation(localizationKeys.placeHolderTips.webResults) : ""}> */}
-                <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.webResults)}>
+                {/* <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.webResults)}>
                     <button
                         // ${showErrors && webResultsError ? "wcg-btn-error" : hasWebResultsPlaceholder ? "wcg-btn-success" : "wcg-btn-warning"}
                         className={`wcg-btn wcg-text-base wcg-text-white wcg-p-1 wcg-lowercase wcg-bg-rose-600 hover:wcg-bg-rose-900`}
@@ -141,7 +141,7 @@ const PromptEditor = (
                     >
                         {"{web_results}"}
                     </button>
-                </TooltipWrapper>
+                </TooltipWrapper> */}
                 {/* <TooltipWrapper tip={showErrors ? getTranslation(localizationKeys.placeHolderTips.query) : ""}> */}
                 <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.query)}>
                     <button
@@ -157,14 +157,14 @@ const PromptEditor = (
                     </button>
                 </TooltipWrapper>
 
-                <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.currentDate)}>
+                {/* <TooltipWrapper tip={getTranslation(localizationKeys.placeHolderTips.currentDate)}>
                     <button
                         className="wcg-text-base wcg-text-white wcg-bg-rose-600 hover:wcg-bg-rose-900 wcg-btn wcg-p-1 wcg-lowercase"
                         onClick={() => handleInsertText('{current_date}')}
                     >
                         {"{current_date}"}
                     </button>
-                </TooltipWrapper>
+                </TooltipWrapper> */}
             </div>
 
             <button

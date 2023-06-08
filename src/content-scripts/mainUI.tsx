@@ -164,7 +164,7 @@ async function updateUI() {
     await renderToolbar()
 
     renderSlashCommandsMenu()
-    await renderSectionButtons();
+    // await renderSectionButtons();
 
 
     chatGptFooter = getFooter()
