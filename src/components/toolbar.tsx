@@ -29,8 +29,9 @@ numResultsOptions.push({
 
 interface ToolbarProps {
     textarea: HTMLTextAreaElement | null
+    categories: string[]
 }
-const Toolbar = ({ textarea }: ToolbarProps) => {
+const Toolbar = ({ textarea, categories }: ToolbarProps) => {
     const [webAccess, setWebAccess] = useState(false)
     const [numResults, setNumResults] = useState(3)
     const [timePeriod, setTimePeriod] = useState('')
@@ -74,7 +75,7 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
 
     useEffect(() => {
         updatePrompts(category);
-      }, []);
+      }, [category]);
 
       useEffect(() => {
         const filteredPromptsByCategory = prompts.filter((prompt) => prompt.category === category);
@@ -161,6 +162,11 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
 
     const removeFocusFromCurrentElement = () => (document.activeElement as HTMLElement)?.blur()
 
+    const dropdownOptions = categories.map((category) => ({
+        value: category,
+        label: category,
+      }));
+
 
     const webAccessToggle =
         <div className="wcg-group wcg-relative wcg-flex">
@@ -206,7 +212,8 @@ const Toolbar = ({ textarea }: ToolbarProps) => {
                     <Dropdown
                         value={category}
                         onChange={handleCategoryChange}
-                        options={categoryOptions} />
+                        options={dropdownOptions}
+                         />
                     <Dropdown
                         value={promptUUID}
                         onChange={handlePromptChange}

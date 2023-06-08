@@ -12,6 +12,7 @@ const defaultConfig = {
     language: getSystemLanguage(),
     promptUUID: 'default',
     trimLongText: false,
+    categories: [] as string[]
 }
 
 export type UserConfig = typeof defaultConfig

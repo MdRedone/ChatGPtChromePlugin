@@ -12,7 +12,7 @@ import { AllBlogsSection, BlogsSection, CategoriesSection } from 'src/components
 // import Section from 'src/components/demo'
 
 import createShadowRoot from 'src/util/createShadowRoot'
-import { compilePrompt, promptContainsWebResults } from 'src/util/promptManager'
+import { compilePrompt, promptContainsWebResults, getSavedCategories } from 'src/util/promptManager'
 import SlashCommandsMenu, { slashCommands } from 'src/components/slashCommandsMenu'
 import { apiExtractText } from './api'
 
@@ -25,6 +25,7 @@ let textarea: HTMLTextAreaElement | null
 let chatGptFooter: HTMLDivElement | null
 let toolbar: HTMLElement | null
 let button: HTMLButtonElement | null 
+let categories: string[]
 // let selectedCategory: string = 'All Blogs'
 
 
@@ -173,6 +174,7 @@ async function updateUI() {
         if (lastChild) lastChild.style.padding = '0 0 0.5em 0'
     }
 
+
     // await renderSectionButtons();
 
     updatingUI = false
@@ -184,8 +186,16 @@ async function renderToolbar() {
         const textareaParentParent = textarea?.parentElement?.parentElement
         const { shadowRootDiv, shadowRoot } = await createShadowRoot('content-scripts/mainUI.css')
         shadowRootDiv.classList.add('wcg-toolbar')
+
+        // Fetch the user configuration including the categories
+        const userConfig = await getUserConfig()
+        const categories = await getSavedCategories();
+        // const { categories } = userConfig
+
         textareaParentParent?.appendChild(shadowRootDiv)
-        render(<Toolbar textarea={textarea} />, shadowRoot)
+        render(<Toolbar textarea={textarea} categories={categories} />, shadowRoot)
+
+        
 
     } catch (e) {
         if (e instanceof Error) {

@@ -98,7 +98,7 @@ export const getCurrentPrompt = async () => {
     return savedPrompts.find((i: Prompt) => i.uuid === currentPromptUuid) || getDefaultPrompt()
 }
 
-export const getSavedPrompts = async (addDefaults = true, category: string) => {
+export const getSavedPrompts = async (addDefaults = true, category: string | null = null) => {
     const { [SAVED_PROMPTS_KEY]: localPrompts, [SAVED_PROMPTS_MOVED_KEY]: promptsMoved } = await Browser.storage.local.get({ [SAVED_PROMPTS_KEY]: [], [SAVED_PROMPTS_MOVED_KEY]: false })
 
     let savedPrompts = localPrompts
@@ -115,11 +115,23 @@ export const getSavedPrompts = async (addDefaults = true, category: string) => {
         await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts, [SAVED_PROMPTS_MOVED_KEY]: true })
         await Browser.storage.sync.set({ [SAVED_PROMPTS_KEY]: [] })
     }
+
+    // let filteredPrompts = savedPrompts;
     const filteredPrompts = savedPrompts.filter((prompt: Prompt) => prompt.category === category);
+
+    // if (category) {
+    //     filteredPrompts = savedPrompts.filter(
+    //       (prompt: Prompt) => prompt.category === category
+    //     );
+    //   }
+
+    
 
 
     return addDefaults ? addDefaultPrompts(savedPrompts) : savedPrompts
 }
+
+
 
 function addDefaultPrompts(prompts: Prompt[]) {
 
@@ -157,3 +169,14 @@ export const deletePrompt = async (prompt: Prompt, category: string) => {
     savedPrompts = savedPrompts.filter((i: Prompt) => i.uuid !== prompt.uuid)
     await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts })
 }
+
+export const getSavedCategories = async () => {
+    const savedPrompts = await getSavedPrompts(false);
+    const categoriesSet = new Set<string>();
+  
+    savedPrompts.forEach((prompt: Prompt) => {
+      categoriesSet.add(prompt.category);
+    });
+  
+    return Array.from(categoriesSet);
+  };

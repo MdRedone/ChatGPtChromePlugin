@@ -3,10 +3,16 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'preact/hooks'
 import { getTranslation, localizationKeys } from 'src/util/localization'
 import { deletePrompt, getDefaultPrompt, getSavedPrompts, Prompt, savePrompt } from 'src/util/promptManager'
 import TooltipWrapper from './tooltipWrapper'
+import Modal from './modal';
+// import { Button, Modal } from 'react-bootstrap';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 const PromptEditor = (
     props: {
         language: string
+        categories: string[]
     }
 ) => {
     const [savedPrompts, setSavedPrompts] = useState<Prompt[]>([])
@@ -16,12 +22,17 @@ const PromptEditor = (
     const [deleteBtnText, setDeleteBtnText] = useState("delete")
     const [selectedCategory, setSelectedCategory] = useState("");
     const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
 
     const [showErrors, setShowErrors] = useState(false)
     const [nameError, setNameError] = useState(false)
     const [textError, setTextError] = useState(false)
     const [webResultsError, setWebResultsError] = useState(false)
     const [queryError, setQueryError] = useState(false)
+    // const [showModal, setShowModal] = useState(false); // State for modal visibility
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
 
     useLayoutEffect(() => {
         updateSavedPrompts()
@@ -144,22 +155,55 @@ const PromptEditor = (
         setSelectedCategory(category);
       };
 
-      const dropdownOptions = [
-        { value: 'category1', label: 'Category 1' },
-        { value: 'category2', label: 'Category 2' }
-      ];
+      const handleCategorySubmit = (category: string) => {
+        setCategories((prevCategories) => [...prevCategories, category]);
+        setSelectedCategory(category);
+      };
+
+      const handleModalOpen = () => {
+        console.log("Modal is being opened");
+        setIsModalOpen(true);
+      };
+
+      const handleModalClose = () => {
+        console.log("Modal is being closed");
+        setIsModalOpen(false);
+      };
+      
+
+    //   const dropdownOptions = [
+    //     { value: 'category1', label: 'Category 1' },
+    //     { value: 'category2', label: 'Category 2' }
+    //   ];
     
-      const dropdown = (
+      // To map declared categories in the dropdown
+    //   const dropdown = (
+    //     <select
+    //       className="wcg-select wcg-flex-1 wcg-py-2 wcg-px-2 wcg-text-base"
+    //       value={selectedCategory}
+    //       onChange={handleCategoryChange}
+    //     >
+    //       <option value="">Select Category</option>
+    //       {dropdownOptions.map((option) => (
+    //         <option key={option.value} value={option.value}>
+    //           {option.label}
+    //         </option>
+    //       ))}
+    //     </select>
+    //   );
+
+      // To add the categories dynamically in the dropdown
+    const dropdown = (
         <select
           className="wcg-select wcg-flex-1 wcg-py-2 wcg-px-2 wcg-text-base"
           value={selectedCategory}
           onChange={handleCategoryChange}
         >
           <option value="">Select Category</option>
-          {dropdownOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
+        {categories.map((category, index) => (
+          <option key={index} value={category}>
+            {category}
+          </option>
           ))}
         </select>
       );
@@ -303,6 +347,17 @@ const PromptList = (
         </button>
     )
 
+    const modalButton = (
+        <button
+          type="button"
+          className="wcg-btn wcg-text-base wcg-bg-green-600 hover:wcg-bg-green-900"
+          onClick={handleModalOpen}
+        >
+          Open Modal
+        </button>
+      );
+
+
     const textArea = (
         <textarea
             ref={textareaRef}
@@ -315,6 +370,7 @@ const PromptList = (
             title="Prompt template text"
         />
     )
+
 
     return (
         <div className="wcg-rounded-box wcg-flex wcg-min-h-[32rem] wcg-w-4/5 wcg-flex-col wcg-gap-4 wcg-border wcg-py-6">
@@ -329,7 +385,15 @@ const PromptList = (
                     <div className="wcg-flex wcg-flex-row wcg-items-center wcg-gap-2">
                         {nameInput}
                         {btnDelete}
+                        {modalButton}
                     </div>
+                    <span>
+                    {isModalOpen && (
+                        <Modal showModal={isModalOpen} closeModal={() => setIsModalOpen(false)}  onSubmit={handleCategorySubmit}>
+                        </Modal>    
+                    )}
+                    </span>
+
                     <div className="wcg-flex wcg-items-center wcg-mt-2">
                         <label className="wcg-p-2 wcg-w-32">Category:</label>
                         {dropdown}
@@ -339,7 +403,9 @@ const PromptList = (
                     {actionToolbar}
                 </div>
             </div >
-        </div >
+
+
+         </div >
     )
 }
 
