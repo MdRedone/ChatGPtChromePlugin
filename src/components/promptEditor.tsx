@@ -23,6 +23,8 @@ const PromptEditor = (
     const [selectedCategory, setSelectedCategory] = useState("");
     const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
+    // const [categories, setCategories] = useState<{ uuid: string; name: string; }[]>([]);
+
 
     const [showErrors, setShowErrors] = useState(false)
     const [nameError, setNameError] = useState(false)
@@ -51,7 +53,7 @@ const PromptEditor = (
     }, [props.language])
 
     useEffect(() => {
-        updatePlaceholderButtons(prompt.text)
+        updatePlaceholderButtons(prompt?.text)
     }, [prompt])
 
     useEffect(() => {
@@ -155,10 +157,22 @@ const PromptEditor = (
         setSelectedCategory(category);
       };
 
-      const handleCategorySubmit = (category: string) => {
-        setCategories((prevCategories) => [...prevCategories, category]);
-        setSelectedCategory(category);
+    //   const handleCategorySubmit = (category: string) => {
+    //     setCategories((prevCategories) => [...prevCategories, category]);
+    //     setSelectedCategory(category);
+    //   };
+
+    //to generate uuid for every category when the user creates
+    const handleCategorySubmit = (category: { uuid: string; name: string; }) => {
+        setCategories((prevCategories: string[]) => [...prevCategories, category.name]);
+        setSelectedCategory(category.name);
       };
+    // const handleCategorySubmit = (category: { uuid: string; name: string; }) => {
+    //     setCategories((prevCategories: { uuid: string; name: string; }[]) => [...prevCategories, category]);
+    //     setSelectedCategory(category.name);
+    //   };
+      
+      
 
       const handleModalOpen = () => {
         console.log("Modal is being opened");
@@ -169,6 +183,16 @@ const PromptEditor = (
         console.log("Modal is being closed");
         setIsModalOpen(false);
       };
+
+    //   const handleDeleteCategory = (category: { uuid: string; name: string }) => {
+    //     setCategories((prevCategories: { uuid: string; name: string }[]) =>
+    //       prevCategories.filter((cat) => cat.uuid !== category.uuid)
+    //     );
+    //     setSelectedCategory(""); // Clear the selected category after deletion
+    //   };
+      
+      
+      
       
 
     //   const dropdownOptions = [
@@ -208,10 +232,23 @@ const PromptEditor = (
         </select>
       );
 
+    //   const categoryDel = (
+    //     <select value={selectedCategory} onChange={handleCategoryChange}>
+    //         {categories.map(category => (
+    //             <option key={category.uuid} value={category.uuid}>
+    //             {category.name}
+    //             <button onClick={() => handleDeleteCategory(category)}>Delete</button>
+    //             </option>
+    //         ))}
+    //     </select>
+
+    //   )
+      
+
 
     const actionToolbar = (
         <div className={`wcg-mt-4 wcg-flex wcg-flex-row wcg-justify-between
-                        ${prompt.uuid === 'default' || prompt.uuid === 'default_en' ? "wcg-hidden" : ""}`}
+                        ${prompt?.uuid === 'default' || prompt?.uuid === 'default_en' ? "wcg-hidden" : ""}`}
         >
             <div className="wcg-flex wcg-flex-row wcg-gap-4">
                 {/* <TooltipWrapper tip={showErrors ? getTranslation(localizationKeys.placeHolderTips.webResults) : ""}> */}
@@ -324,7 +361,7 @@ const PromptList = (
                         ${showErrors && nameError ? "wcg-input-error" : ""}`
             }
             placeholder={getTranslation(localizationKeys.placeholders.namePlaceholder)}
-            value={prompt.name}
+            value={prompt?.name}
             onInput={(e: Event) => {
                 setNameError(false)
                 setPrompt({ ...prompt, name: (e.target as HTMLInputElement).value })
@@ -397,6 +434,9 @@ const PromptList = (
                     <div className="wcg-flex wcg-items-center wcg-mt-2">
                         <label className="wcg-p-2 wcg-w-32">Category:</label>
                         {dropdown}
+                        <span>
+                            {/* {categoryDel} */}
+                        </span>
                     </div>
                     {textArea}
 

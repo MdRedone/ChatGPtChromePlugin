@@ -104,11 +104,13 @@
 
 // export default Modal;
 import { h, FunctionalComponent } from 'preact';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ModalProps {
   showModal: boolean;
   closeModal: () => void;
-  onSubmit: (category: string) => void;
+  // onSubmit: (category: string) => void;
+  onSubmit: (category: { uuid: string; name: string }) => void;
 }
 
 const Modal: FunctionalComponent<ModalProps> = ({ showModal, closeModal, onSubmit }) => {
@@ -116,10 +118,25 @@ const Modal: FunctionalComponent<ModalProps> = ({ showModal, closeModal, onSubmi
     return null;
   }
 
+  // const handleSubmit = () => {
+  //   const inputElement = document.getElementById('categoryInput') as HTMLInputElement;
+  //   const categoryName = inputElement.value.trim();
+  //   onSubmit(categoryName);
+  //   closeModal();
+  // };
+
+  // To generate new uuid for every category when the user creates new category from the modal
   const handleSubmit = () => {
     const inputElement = document.getElementById('categoryInput') as HTMLInputElement;
     const categoryName = inputElement.value.trim();
-    onSubmit(categoryName);
+
+    // Generate a UUID for the new category
+    const newCategory = {
+      uuid: uuidv4(),
+      name: categoryName,
+    };
+
+    onSubmit(newCategory);
     closeModal();
   };
 

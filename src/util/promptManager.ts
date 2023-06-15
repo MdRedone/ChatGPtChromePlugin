@@ -129,6 +129,7 @@ export const getSavedPrompts = async (addDefaults = true, category: string | nul
 
 
     return addDefaults ? addDefaultPrompts(savedPrompts) : savedPrompts
+    // return addDefaults ? addDefaultPrompts(filteredPrompts) : filteredPrompts;
 }
 
 
@@ -164,12 +165,35 @@ export const savePrompt = async (prompt: Prompt, category: string) => {
     await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts })
 }
 
+// export const savePrompt = async (prompt: Prompt, categoryUUID: string) => {
+//     const savedPrompts = await getSavedPrompts(false, categoryUUID);
+//     const categoryIndex = savedPrompts.findIndex((category: Prompt) => category.uuid === categoryUUID);
+  
+//     if (categoryIndex >= 0) {
+//       const category = savedPrompts[categoryIndex];
+//       const promptIndex = category.prompts.findIndex((p: Prompt) => p.uuid === prompt.uuid);
+  
+//       if (promptIndex >= 0) {
+//         // Update existing prompt
+//         category.prompts[promptIndex] = { ...prompt };
+//       } else {
+//         // Add new prompt
+//         prompt.uuid = uuidv4();
+//         category.prompts.push({ ...prompt });
+//       }
+  
+//       savedPrompts[categoryIndex] = { ...category };
+//       await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts });
+//     }
+//   };
+  
 export const deletePrompt = async (prompt: Prompt, category: string) => {
     let savedPrompts = await getSavedPrompts(true, category)
     savedPrompts = savedPrompts.filter((i: Prompt) => i.uuid !== prompt.uuid)
     await Browser.storage.local.set({ [SAVED_PROMPTS_KEY]: savedPrompts })
 }
 
+// To get saved categories from the local storage and display it in the toolbar.tsx dropdown
 export const getSavedCategories = async () => {
     const savedPrompts = await getSavedPrompts(false);
     const categoriesSet = new Set<string>();
